@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -13,6 +14,20 @@ public class MainActivity extends AppCompatActivity {
 
     SeekBar timerSeekBar;
     TextView timerTextView;
+    Button controllerButton;
+    Boolean counterIsActive = false;
+    CountDownTimer countDownTimer;
+
+    public void resetTimer(){
+
+        timerTextView.setText("0:30");
+        timerSeekBar.setProgress(30);
+        countDownTimer.cancel();
+        controllerButton.setText("GO!");
+        timerSeekBar.setEnabled(true);
+        counterIsActive = false;
+
+    }
 
     public void updateTimer(int secondsLeft){
 
@@ -31,27 +46,38 @@ public class MainActivity extends AppCompatActivity {
 
     public void controlTimer(View view) {
 
-        new CountDownTimer(timerSeekBar.getProgress() * 1000 + 100, 1000){
+        if (counterIsActive == false ) {
 
-            @Override
-            public void onTick(long millisUntilFinished) {
+            counterIsActive = true;
+            timerSeekBar.setEnabled(false);
+            controllerButton.setText("Stop");
 
-                updateTimer((int) millisUntilFinished / 1000);
+            countDownTimer = new CountDownTimer(timerSeekBar.getProgress() * 1000 + 100, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                    updateTimer((int) millisUntilFinished / 1000);
 
 
-            }
+                }
 
-            @Override
-            public void onFinish() {
+                @Override
+                public void onFinish() {
 
-                timerTextView.setText("0:00");
+                    timerTextView.setText("0:00");
 
-                //Se añade el sonido de trompeta para que suene cuando el contador llegue a '0'
-                MediaPlayer mplayer = MediaPlayer.create(getApplicationContext(), R.raw.airhorn);
-                mplayer.start();
+                    //Se añade el sonido de trompeta para que suene cuando el contador llegue a '0'
+                    resetTimer();
+                    MediaPlayer mplayer = MediaPlayer.create(getApplicationContext(), R.raw.airhorn);
+                    mplayer.start();
 
-            }
-        }.start();
+                }
+            }.start();
+        } else {
+
+            resetTimer();
+        }
     }
 
     @Override
@@ -61,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
         timerSeekBar = findViewById(R.id.timerSeekBar);
         timerTextView = findViewById(R.id.timerTextView);
+        controllerButton = findViewById(R.id.controllerButton);
 
         timerSeekBar.setMax(600);
         timerSeekBar.setProgress(30);
