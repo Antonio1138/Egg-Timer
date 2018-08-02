@@ -1,5 +1,6 @@
 package com.antonio.eggtimer;
 
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
 
                 timerTextView.setText("0:00");
-                Log.i("finished", "timer done");
+
+                //Se añade el sonido de trompeta para que suene cuando el contador llegue a '0'
+                MediaPlayer mplayer = MediaPlayer.create(getApplicationContext(), R.raw.airhorn);
+                mplayer.start();
 
             }
         }.start();
